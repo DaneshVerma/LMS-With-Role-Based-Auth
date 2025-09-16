@@ -12,6 +12,12 @@ async function registerUser(req, res) {
   if (!userName || !password || !firstName || !lastName || !email) {
     return res.status(400).json({ message: "All fields are required" });
   }
+
+  const existingUser = await userModel.findOne({ userName });
+  if (existingUser) {
+    return res.status(400).json({ message: "User already exists" });
+  }
+
   if (key === process.env.KEY) {
     const newUser = await userModel.create({
       userName,
@@ -20,9 +26,25 @@ async function registerUser(req, res) {
       email,
       role: "admin",
     });
+
+    const token = newUser.generateToken();
+    res.cookie("token", token, {
+      httpOnly: true,
+    });
+
     return res
       .status(201)
-      .json({ message: "admin registered successfully", user: newUser });
+      .json({
+        message: "admin registered successfully",
+        user: {
+          id: newUser._id,
+          userName: newUser.userName,
+          email: newUser.email,
+          role: newUser.role,
+          fullName: newUser.fullName,
+        },
+        token,
+      });
   } else {
     return res.status(400).json({ message: "Invalid key" });
   }
