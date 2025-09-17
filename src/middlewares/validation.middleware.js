@@ -35,8 +35,13 @@ const registerUserValidation = [
   validateResults,
 ];
 
-
+const loginValidation = [
+  body("email").isEmail().withMessage("Invalid email format"),
+  body("password").notEmpty().withMessage("Password is required"),
+  validateResults,
+];
 
 module.exports = {
   registerUserValidation,
+  loginValidation,
 };
