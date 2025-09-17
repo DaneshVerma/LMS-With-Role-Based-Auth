@@ -48,39 +48,6 @@ async function registerUser(req, res) {
   }
 }
 
-async function createUserByAdmin(req, res) {
-  const {
-    role,
-    userName,
-    password,
-    fullName: { firstName, lastName },
-    email,
-  } = req.body;
-
-  const existingUser = await userModel.findOne({ email });
-  if (existingUser)
-    return res.status(400).json({ message: "Email already exists" });
-
-   const newUser = await userModel.create({
-    userName,
-    password,
-    fullName: { firstName, lastName },
-    email,
-    role,
-  });
-  return res.status(201).json({
-    message: `${role} created successfully`,
-    user: {
-      id: newUser._id,
-      userName: newUser.userName,
-      email: newUser.email,
-      role: newUser.role,
-      fullName: newUser.fullName,
-    },
-  });
-
-}
-
 async function loginUser(req, res) {
   const { email, password } = req.body;
 
@@ -121,4 +88,4 @@ async function logoutUser(req, res) {
   });
 }
 
-module.exports = { registerUser, createUserByAdmin, loginUser, logoutUser };
+module.exports = { registerUser, loginUser, logoutUser };

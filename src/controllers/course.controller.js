@@ -1,7 +1,6 @@
 const Course = require("../models/course.model");
 const User = require("../models/user.model");
 
-// Admin creates course
 async function createCourse(req, res) {
   const { name, description } = req.body;
 
@@ -9,7 +8,6 @@ async function createCourse(req, res) {
   res.status(201).json({ message: "Course created", course: newCourse });
 }
 
-// Assign teacher to course
 async function assignTeacher(req, res) {
   const { courseId, teacherId } = req.body;
 
