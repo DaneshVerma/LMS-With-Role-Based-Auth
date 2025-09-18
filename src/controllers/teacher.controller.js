@@ -20,15 +20,16 @@ async function uploadLecture(req, res) {
       .json({ message: "You are not assigned to this course" });
   }
 
-  let fileUrl = null;
+  let fileId = null;
 
   if (req.file) {
     try {
       const uploadResponse = await imagekit.upload({
-        file: req.file.buffer, 
+        file: req.file.buffer,
         fileName: req.file.originalname,
+        folder: "e-learning-site/",
       });
-      fileUrl = uploadResponse.url;
+      fileId = uploadResponse.fileId;
     } catch (err) {
       return res
         .status(500)
@@ -40,7 +41,7 @@ async function uploadLecture(req, res) {
     course: courseId,
     title: title,
     content: content,
-    fileUrl: fileUrl,
+    fileId: fileId,
     uploadedBy: teacherId,
   });
 
@@ -49,7 +50,6 @@ async function uploadLecture(req, res) {
     lecture,
   });
 }
-
 
 async function getCourseLectures(req, res) {
   const teacherId = req.user.id;

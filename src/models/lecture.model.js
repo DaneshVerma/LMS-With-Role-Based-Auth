@@ -4,7 +4,7 @@ const lectureSchema = new mongoose.Schema({
   course: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
   title: String,
   content: String,
-  fileUrl: String,
+  fileId: String,
   uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 

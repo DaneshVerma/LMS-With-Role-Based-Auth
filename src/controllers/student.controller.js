@@ -1,6 +1,6 @@
 const Course = require("../models/course.model");
 const Lecture = require("../models/lecture.model");
-
+const imagekit = require("../services/storage.service");
 
 async function enrollCourse(req, res) {
   const studentId = req.user.id;
@@ -39,7 +39,25 @@ async function getLectures(req, res) {
   }
 
   const lectures = await Lecture.find({ course: courseId });
-  res.json({ lectures });
+
+  const lecturesWithUrls = lectures.map((lecture) => {
+    let fileUrl = null;
+
+    if (lecture.fileId) {
+      fileUrl = imagekit.url({
+        path: lecture.fileId,
+        signed: true,
+        expireSeconds: 60 * 60,
+      });
+    }
+
+    return {
+      ...lecture.toObject(),
+      fileUrl,
+    };
+  });
+
+  res.json({ lectures: lecturesWithUrls });
 }
 
 module.exports = {
