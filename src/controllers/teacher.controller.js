@@ -1,5 +1,6 @@
 const Course = require("../models/course.model");
 const Lecture = require("../models/lecture.model");
+const imagekit = require("../services/storage.service");
 
 async function getAssignedCourses(req, res) {
   const teacherId = req.user.id;
@@ -19,10 +20,27 @@ async function uploadLecture(req, res) {
       .json({ message: "You are not assigned to this course" });
   }
 
+  let fileUrl = null;
+
+  if (req.file) {
+    try {
+      const uploadResponse = await imagekit.upload({
+        file: req.file.buffer, 
+        fileName: req.file.originalname,
+      });
+      fileUrl = uploadResponse.url;
+    } catch (err) {
+      return res
+        .status(500)
+        .json({ message: "File upload failed", error: err.message });
+    }
+  }
+
   const lecture = await Lecture.create({
     course: courseId,
-    title,
-    content,
+    title: title,
+    content: content,
+    fileUrl: fileUrl,
     uploadedBy: teacherId,
   });
 
@@ -31,6 +49,7 @@ async function uploadLecture(req, res) {
     lecture,
   });
 }
+
 
 async function getCourseLectures(req, res) {
   const teacherId = req.user.id;
