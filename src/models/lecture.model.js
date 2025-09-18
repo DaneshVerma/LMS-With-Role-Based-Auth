@@ -5,6 +5,7 @@ const lectureSchema = new mongoose.Schema({
   title: String,
   content: String,
   fileId: String,
+  filePath: String,
   uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 

@@ -20,7 +20,7 @@ async function uploadLecture(req, res) {
       .json({ message: "You are not assigned to this course" });
   }
 
-  let fileId = null;
+  let fileId , filePath = null;
 
   if (req.file) {
     try {
@@ -30,6 +30,7 @@ async function uploadLecture(req, res) {
         folder: "e-learning-site/",
       });
       fileId = uploadResponse.fileId;
+      filePath = uploadResponse.filePath;
     } catch (err) {
       return res
         .status(500)
@@ -42,6 +43,7 @@ async function uploadLecture(req, res) {
     title: title,
     content: content,
     fileId: fileId,
+    filePath: filePath,
     uploadedBy: teacherId,
   });
 

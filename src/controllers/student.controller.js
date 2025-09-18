@@ -43,9 +43,9 @@ async function getLectures(req, res) {
   const lecturesWithUrls = lectures.map((lecture) => {
     let fileUrl = null;
 
-    if (lecture.fileId) {
+    if (lecture.filePath) {
       fileUrl = imagekit.url({
-        path: lecture.fileId,
+        path: lecture.filePath,
         signed: true,
         expireSeconds: 60 * 60,
       });
