@@ -1,6 +1,62 @@
 const Course = require("../models/course.model");
 const Lecture = require("../models/lecture.model");
 const imagekit = require("../services/storage.service");
+const mongoose = require('mongoose');
+async function getDashboard(req, res) {
+  const studentId = new mongoose.Types.ObjectId(req.user.id);
+
+  try {
+    const result = await Course.aggregate([
+      { $match: { students: studentId } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "teachers",
+          foreignField: "_id",
+          as: "teacherDetails",
+        },
+      },
+      {
+        $lookup: {
+          from: "lectures",
+          localField: "_id",
+          foreignField: "course",
+          as: "lectures",
+        },
+      },
+      {
+        $addFields: {
+          totalLectures: { $size: "$lectures" },
+          teachers: {
+            $map: {
+              input: "$teacherDetails",
+              as: "teacher",
+              in: {
+                id: "$$teacher._id",
+                fullName: "$$teacher.fullName",
+                email: "$$teacher.email",
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          description: 1,
+          teachers: 1,
+          totalLectures: 1,
+        },
+      },
+    ]);
+
+    return res.json({ dashboard: result });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Aggregation failed", error: err.message });
+  }
+}
 
 async function enrollCourse(req, res) {
   const studentId = req.user.id;
@@ -64,4 +120,5 @@ module.exports = {
   enrollCourse,
   getMyCourses,
   getLectures,
+  getDashboard,
 };
