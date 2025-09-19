@@ -1,3 +1,6 @@
+const mongoose = require("mongoose");
+const Course = require("../models/course.model");
+
 async function createUserByAdmin(req, res) {
   const {
     role,
@@ -11,7 +14,7 @@ async function createUserByAdmin(req, res) {
   if (existingUser)
     return res.status(400).json({ message: "Email already exists" });
 
-   const newUser = await userModel.create({
+  const newUser = await userModel.create({
     userName,
     password,
     fullName: { firstName, lastName },
@@ -28,9 +31,45 @@ async function createUserByAdmin(req, res) {
       fullName: newUser.fullName,
     },
   });
-
 }
 
+async function getAdminDashboard(req, res) {
+  try {
+    const result = await Course.aggregate([
+      {
+        $lookup: {
+          from: "lectures",
+          localField: "_id",
+          foreignField: "course",
+          as: "lectures",
+        },
+      },
+      {
+        $addFields: {
+          totalStudents: { $size: "$students" },
+          totalTeachers: { $size: "$teachers" },
+          totalLectures: { $size: "$lectures" },
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          description: 1,
+          totalStudents: 1,
+          totalTeachers: 1,
+          totalLectures: 1,
+        },
+      },
+    ]);
+
+    return res.json({ dashboard: result });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Aggregation failed", error: err.message });
+  }
+}
 module.exports = {
   createUserByAdmin,
+  getAdminDashboard
 };
