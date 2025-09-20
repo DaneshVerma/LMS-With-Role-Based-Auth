@@ -58,14 +58,16 @@ It supports three roles: **Admin, Teacher, and Student** with authentication, ro
 - `GET /student/lectures/:courseId` → Get lectures of a course  
 
 ---
+## Tech Stack 
 
-## Tech Stack
-- **Backend:** Node.js, Express.js  
-- **Database:** MongoDB (Mongoose ORM)  
-- **Authentication:** JWT + bcrypt  
-- **File Storage:** ImageKit (Signed URLs)  
-
----
+- **Node.js** → Provides runtime environment for server-side JavaScript. Handles async I/O, APIs, and event-driven operations.
+- **Express.js** → Framework on top of Node.js for routing, middleware, and request handling.
+- **MongoDB (NoSQL)** → Stores data in a flexible JSON-like format. Scales horizontally and supports aggregation pipelines.
+- **Mongoose** → ODM library for MongoDB, adds schema validation, relationships, and indexing.
+- **JWT (JSON Web Token)** → Stateless authentication mechanism. Tokens are signed and verified using a secret.
+- **Bcrypt** → Secure password hashing with salt, protecting against brute force attacks.
+- **ImageKit** → File storage & CDN with signed URL support for secure file access.
+- **Postman** → For API testing, debugging, and documenting endpoints.
 
 ## Setup Instructions
 1. Clone repository
